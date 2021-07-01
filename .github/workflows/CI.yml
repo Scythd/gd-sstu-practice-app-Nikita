@@ -17,9 +17,9 @@ jobs:
         java-version: '11' 
         distribution: 'adopt' 
     - name: Build with Maven 
-      run: mvn package
+      run: mvn package war:war
     - name: Copy artifact to staging directory 
-      run: mkdir staging && cp target/*.jar staging 
+      run: mkdir staging && cp target/*.war staging 
     - uses: actions/upload-artifact@v2 
       with: 
         name: Package 
