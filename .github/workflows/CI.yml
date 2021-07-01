@@ -16,10 +16,8 @@ jobs:
       with: 
         java-version: '11' 
         distribution: 'adopt' 
-    - name: applying javaformat
-      run: mvn spring-javaformat:apply   
     - name: Build with Maven 
-      run: mvn package
+      run: mvn package spring-javaformat:apply  
     - name: Copy artifact to staging directory 
       run: mkdir staging && cp target/*.war staging 
     - uses: actions/upload-artifact@v2 
