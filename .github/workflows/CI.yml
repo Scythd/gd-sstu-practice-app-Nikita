@@ -1,0 +1,38 @@
+# This workflow will build a Java project with Maven 
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven name: Java CI with Maven 
+on: 
+  push: 
+    branches: [ main ] 
+  pull_request: 
+    branches: [ main ] 
+    
+jobs: 
+  build: 
+    runs-on: ubuntu-latest 
+    steps: 
+    - uses: actions/checkout@v2 
+    - name: Set up JDK 11 
+      uses: actions/setup-java@v2 
+      with: 
+        java-version: '11' 
+        distribution: 'adopt' 
+    - name: Build with Maven 
+      run: mvn package war:war 
+    - name: Copy artifact to staging directory 
+      run: mkdir staging && cp target/*.war staging 
+    - uses: actions/upload-artifact@v2 
+      with: 
+        name: Package 
+        path: staging 
+        
+  containerization: 
+    needs: build 
+    runs-on: ubuntu-latest 
+    steps: 
+    - uses: actions/checkout@v2 
+    - uses: actions/download-artifact@master 
+      with: 
+        name: Package 
+        path: staging 
+    - name: Build a docker container 
+      run: ls -a
