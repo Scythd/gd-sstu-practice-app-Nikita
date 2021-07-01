@@ -19,7 +19,7 @@ jobs:
     - name: Build with Maven 
       run: mvn package
     - name: making war
-      run: pwd && cd target && pwd && ls -a && for f in "*.jar"; do mv -i -- "$f" "${f%.jar}.war" -vn; done && ls -a && cd .. && pwd
+      run: pwd && cd target && pwd && ls -a && for f in *.jar; do mv -- "$f" "${f%.jar}.war"; done && ls -a && cd .. && pwd
     - name: Copy artifact to staging directory 
       run: | 
         mkdir staging
