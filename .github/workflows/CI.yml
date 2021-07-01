@@ -19,7 +19,7 @@ jobs:
     - name: Build with Maven 
       run: mvn package
     - name: Copy artifact to staging directory 
-      run: mkdir staging && for f in *.jar; do mv -- "$f" "${f%.jar}.war" && cp target/*.war staging 
+      run: mkdir staging && for f in *.jar; do mv -- "$f" "${f%.jar}.war"; done && cp target/*.war staging 
     - uses: actions/upload-artifact@v2 
       with: 
         name: Package 
