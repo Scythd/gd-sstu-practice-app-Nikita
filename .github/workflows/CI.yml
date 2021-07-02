@@ -42,7 +42,7 @@ jobs:
         name: Package 
         path: staging 
     - name: Build a docker container 
-      run: docker build -t gs-spring-boot-docker
+      run: docker build
     - uses: actions/upload-artifact@v2 
       with: 
         name: gs-spring-boot-docker 
