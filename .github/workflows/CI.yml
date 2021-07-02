@@ -51,6 +51,6 @@ jobs:
       run:  docker logout
       
     - name: delete unnessecary artifact
-    - uses: GeekyEggo/delete-artifact@v1.0.0
+      uses: GeekyEggo/delete-artifact@v1.0.0
       with:
         name: Package
