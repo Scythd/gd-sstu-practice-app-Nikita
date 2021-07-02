@@ -1,1 +1,15 @@
 
+on: workflow_dispatch
+
+jobs:
+  totalCleanUp:
+    runs-on: ubuntu-latest 
+    steps:
+    - name: clen art storage
+    - uses: jimschubert/delete-artifacts-action@v1
+      with: 
+        GITHUB_TOKEN: ${{github.token}}
+        GITHUB_REPOSITORY: ${{github.repository}}
+        min_bytes: 0
+    - name: Tere is an empty
+      run: echo end
