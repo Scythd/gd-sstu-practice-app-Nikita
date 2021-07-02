@@ -47,3 +47,5 @@ jobs:
       run: docker build -t scythd/buffer:test .
     - name: Push a docker container   
       run: docker push scythd/buffer:test
+    - name: Logout to docker hub
+      run:  docker logout
