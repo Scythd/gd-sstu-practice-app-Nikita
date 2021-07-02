@@ -49,3 +49,8 @@ jobs:
       run: docker push scythd/buffer:test
     - name: Logout to docker hub
       run:  docker logout
+      
+    - name: delete unnessecary artifact
+    - uses: GeekyEggo/delete-artifact@v1.0.0
+      with:
+        name: Package
