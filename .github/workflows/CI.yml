@@ -41,6 +41,8 @@ jobs:
       with: 
         name: Package 
         path: staging 
+    - name: Auth to docker hub
+      run:  docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_PASSWORD}}
     - name: Build a docker container 
       run: docker build -t scythd/buffer:test .
     - name: Push a docker container   
