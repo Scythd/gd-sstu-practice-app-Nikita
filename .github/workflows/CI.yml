@@ -42,8 +42,8 @@ jobs:
         name: Package 
         path: staging 
     - name: Build a docker container 
-      run: docker build -t springio/gs-spring-boot-docker
+      run: docker build -t gs-spring-boot-docker
     - uses: actions/upload-artifact@v2 
       with: 
-        name: Package 
+        name: gs-spring-boot-docker 
         path: .
