@@ -60,9 +60,9 @@ jobs:
     - uses: aws-actions/amazon-ecr-login@v1
      
     - name: Build a docker container 
-      run: docker build -t scythd/buffer:latest .
+      run: docker build -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
     - name: Push a docker container   
-      run: docker push 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr
+      run: docker push 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
     - name: Logout to docker hub
       run:  docker logout
 
