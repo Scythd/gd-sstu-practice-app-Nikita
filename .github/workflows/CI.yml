@@ -2,12 +2,13 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven name: Java CI with Maven 
 on: 
   push: 
-    branches: [ main ] 
+    branches: [ Dockerfile ] 
   pull_request: 
-    branches: [ main ] 
+    branches: [ Dockerfile ] 
 
 jobs: 
   build: 
+    
     runs-on: ubuntu-latest 
     steps: 
     - uses: actions/checkout@v2 
@@ -41,5 +42,16 @@ jobs:
       with: 
         name: Package 
         path: staging 
+    - name: Auth to docker hub
+      run:  docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_PASSWORD}}
     - name: Build a docker container 
-      run: ls -a
+      run: docker build -t scythd/buffer:test .
+    - name: Push a docker container   
+      run: docker push scythd/buffer:test
+    - name: Logout to docker hub
+      run:  docker logout
+      
+    - name: delete unnessecary artifact
+      uses: GeekyEggo/delete-artifact@v1.0.0
+      with:
+        name: Package
