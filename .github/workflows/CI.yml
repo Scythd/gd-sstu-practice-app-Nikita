@@ -52,11 +52,13 @@ jobs:
 #      run:  docker logout
       
     - name: Auth to AWS
-      uses: aws-actions/amazon-ecr-login@v1
-      with:
+      uses: aws-actions/configure-aws-credentials@v1
+       with:
         aws-access-key-id: ${{ secrets.ECR_ID }}
         aws-secret-access-key: ${{ secrets.ECR_SECRET }}
         aws-region: ${{ env.ECR_REGION }}
+      uses: aws-actions/amazon-ecr-login@v1
+     
     - name: Build a docker container 
       run: docker build -t scythd/buffer:test .
     - name: Push a docker container   
