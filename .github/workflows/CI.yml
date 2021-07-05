@@ -2,9 +2,9 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven name: Java CI with Maven 
 on: 
   push: 
-    branches: [ Dockerfile ] 
+    branches: [ main ] 
   pull_request: 
-    branches: [ Dockerfile ] 
+    branches: [ main ] 
 
 jobs: 
   build: 
@@ -33,7 +33,7 @@ jobs:
         name: Package 
         path: staging 
 
-  containerization: 
+  containerizationAndPull: 
     needs: build 
     runs-on: ubuntu-latest 
     steps: 
@@ -42,15 +42,30 @@ jobs:
       with: 
         name: Package 
         path: staging 
-    - name: Auth to docker hub
-      run:  docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_PASSWORD}}
+#    - name: Auth to docker hub
+#      run:  docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_PASSWORD}}
+#    - name: Build a docker container 
+#      run: docker build -t scythd/buffer:test .
+#    - name: Push a docker container   
+#      run: docker push scythd/buffer:test
+#    - name: Logout to docker hub
+#      run:  docker logout
+      
+    - name: Auth to AWS
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.ECR_ID }}
+        aws-secret-access-key: ${{ secrets.ECR_SECRET }}
+        aws-region: ${{ secrets.ECR_REGION }}
+    - uses: aws-actions/amazon-ecr-login@v1
+     
     - name: Build a docker container 
-      run: docker build -t scythd/buffer:test .
+      run: docker build -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
     - name: Push a docker container   
-      run: docker push scythd/buffer:test
+      run: docker push 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
     - name: Logout to docker hub
       run:  docker logout
-      
+
     - name: delete unnessecary artifact
       uses: GeekyEggo/delete-artifact@v1.0.0
       with:
