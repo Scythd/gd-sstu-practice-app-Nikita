@@ -13,7 +13,7 @@ jobs:
     - name: Prepare key
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
     - name: Use agent
-      run: eval `ssh-agent` && && ssh-add ~/.ssh/bastion-key.pem
+      run: eval `ssh-agent` &&  && ssh-add ~/.ssh/bastion-key.pem
     - name: Bastion AuthN
       run: ssh -A ec2-user@${{ secrets.BASTION_IP }}
     - name: Bastion connection agreement
