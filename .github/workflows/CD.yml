@@ -11,18 +11,20 @@ jobs:
     steps: 
     
     - name: Prepare key
-      run: touch ~/.ssh/id_rsa && echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa && chmod 400 ~/.ssh/id_rsa
+      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
     - name: Use agent
-      run: eval `ssh-agent` && ssh-add ~/.ssh/id_rsa
+      run: eval `ssh-agent` && ssh-add ~/.ssh/bastion-key.pem
     - name: Bastion AuthN
       run: ssh -A ec2-user@${{ secrets.BASTION_IP }}
     - name: Bastion connection agreement
       run: yes
+    - run:  ^C
     - name: App AuthN
       run: ssh ubuntu@${{ secrets.APP_IP }}
     - name: App connection agreement
       run: yes  
-      
+    - run:  ^C
+    
     - name: AuthN to AWS
       uses: aws-actions/configure-aws-credentials@v1
       with:
