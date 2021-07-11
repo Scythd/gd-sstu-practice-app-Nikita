@@ -9,7 +9,7 @@ jobs:
     
     runs-on: ubuntu-latest 
     steps: 
-    - run: ls -a
+    - run: ssh
     - name: Prepare key
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
     - name: Use agent
