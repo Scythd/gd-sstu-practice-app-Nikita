@@ -14,7 +14,7 @@ jobs:
     - name: Prepare key
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
     - name: Use agent
-      run: eval `ssh-agent -s`
+      run: eval "$(ssh-agent)"
     - run: ssh-add ~/.ssh/bastion-key.pem
     - run: ${{ secrets.SSH_PASSPHRASE }}
     - name: Bastion AuthN
