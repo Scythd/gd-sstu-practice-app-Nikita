@@ -10,15 +10,19 @@ jobs:
     
     runs-on: ubuntu-latest 
     steps: 
-    - run: mkdir ~/.ssh && touch ~/.ssh/bastion-key.pem
-    - name: Prepare key
-      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
-#    - name: Use agent
+#    - run: mkdir ~/.ssh && touch ~/.ssh/bastion-key.pem
+ #   - name: Prepare key
+ #     run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
+    - name: Use agent
+      uses: yakuhzi/setup-ssh-agent@v1.5.4
+      with:
+        ssh-public-key: ${{ secrets.SSH_PUBLIC_KEY }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 #      run: eval "$(ssh-agent -c)"
 #    - run: ssh-add ~/.ssh/bastion-key.pem
 #    - run: ${{ secrets.SSH_PASSPHRASE }}
     - name: Bastion AuthN
-      run: ssh -i ~/.ssh/bastion-key.pem ec2-user@${{ secrets.BASTION_IP }}
+      run: ssh -A ec2-user@${{ secrets.BASTION_IP }}
     - name: Bastion connection agreement
       run: yes
     - run : ${{ secrets.SSH_PASSPHRASE }}
