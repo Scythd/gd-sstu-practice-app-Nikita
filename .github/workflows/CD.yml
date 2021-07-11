@@ -16,7 +16,7 @@ jobs:
     - name: Use agent
       run: eval `ssh-agent` 
     - run: ssh-add ~/.ssh/bastion-key.pem
-    - run: ${{ secrets.SSH_PRIVATE_KEY }}
+    - run: ${{ secrets.SSH_PASSPHRASE }}
     - name: Bastion AuthN
       run: ssh -A ec2-user@${{ secrets.BASTION_IP }}
     - name: Bastion connection agreement
