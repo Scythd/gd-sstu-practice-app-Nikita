@@ -10,7 +10,7 @@ jobs:
     
     runs-on: ubuntu-latest 
     steps: 
-    - run: mkdir ~/.ssh && chmod 444 ~/.ssh && touch ~/.ssh/bastion-key.pem
+    - run: mkdir ~/.ssh && chmod 777 ~/.ssh && touch ~/.ssh/bastion-key.pem
     - name: Prepare key
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 777 ~/.ssh/bastion-key.pem
     - name: Use agent
