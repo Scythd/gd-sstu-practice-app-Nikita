@@ -18,7 +18,7 @@ jobs:
 #    - run: ssh-add ~/.ssh/bastion-key.pem
 #    - run: ${{ secrets.SSH_PASSPHRASE }}
     - name: Bastion AuthN
-      run: ssh -tt -i ~/.ssh/bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} 
+      run: ssh -tt -i ~/.ssh/bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} && ${{ secrets.SSH_PASSPHRASE }}
     - name: Bastion connection agreement
       run : ${{ secrets.SSH_PASSPHRASE }}
     - name: App AuthN
