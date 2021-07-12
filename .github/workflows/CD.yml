@@ -14,7 +14,13 @@ jobs:
     - name: Prepare key
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
     - name: Use agent
-      run: eval `ssh-agent -s` && echo '#!/usr/bin/expect -f \n spawn ssh-add ~/.ssh/bastion-key.pem \n expect "Enter passphrase for /home/runner/.ssh/bastion-key.pem:" \n send "${{ secrets.SSH_PASSPHRASE }}" \n interact' > ./prep.sh && chmod +x ./prep.sh &&./prep.sh
+      run: | 
+        sudo apt-get update -y 
+        sudo apt-get install -y expect
+        eval `ssh-agent -s`
+        echo $'#!/usr/bin/expect -f \n spawn ssh-add ~/.ssh/bastion-key.pem \n expect "Enter passphrase for /home/runner/.ssh/bastion-key.pem:" \n send "${{ secrets.SSH_PASSPHRASE }}" \n interact' > ./prep.sh
+        chmod +x ./prep.sh 
+        ./prep.sh
      
       shell: bash
     - run: ${{ secrets.SSH_PASSPHRASE }}
