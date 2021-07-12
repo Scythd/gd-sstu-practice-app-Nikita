@@ -31,5 +31,3 @@ jobs:
         docker logout
         \'
         '
-    - name: Kill agent
-      run: kill $SSH_AGENT_PID
