@@ -13,12 +13,12 @@ jobs:
 
     - name: Use agent
       run: | 
-        mkdir ~/.ssh && touch ~/.ssh/bastion-key.pem
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem 
+        chmod 400 bastion-key.pem
         sudo apt-get update -y 
         sudo apt-get install -y expect
         eval `ssh-agent -s`
-        echo $'#!/usr/bin/expect -f \n spawn ssh-add ~/.ssh/bastion-key.pem \n expect "Enter passphrase for /home/runner/.ssh/bastion-key.pem:" \n send "${{ secrets.SSH_PASSPHRASE }}" \n interact' > ./prep.sh
+        echo $'#!/usr/bin/expect -f \n spawn ssh-add bastion-key.pem \n expect "Enter passphrase for /home/runner/bastion-key.pem:" \n send "${{ secrets.SSH_PASSPHRASE }}" \n interact' > ./prep.sh
         chmod +x ./prep.sh 
         ./prep.sh
      
