@@ -23,8 +23,8 @@ jobs:
         chmod 400 bastion-key.pem &&
         APP="ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}" &&
         $APP \'
-        docker rm $(docker stop petclinic) &&
-        docker rmi $(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q) &&
+        docker rm -f $(docker stop petclinic) &&
+        docker rmi -f $(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q) &&
         aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
         docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
         docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
