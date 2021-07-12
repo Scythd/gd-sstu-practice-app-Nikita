@@ -13,12 +13,12 @@ jobs:
     - run: mkdir ~/.ssh && touch ~/.ssh/bastion-key.pem
     - name: Prepare key
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
-#    - name: Use agent
-#      run: eval `ssh-agent`
-#    - run: ssh-add ~/.ssh/bastion-key.pem
-#    - run: ${{ secrets.SSH_PASSPHRASE }}
+    - name: Use agent
+      run: eval `ssh-agent -s` && ssh-add ~/.ssh/bastion-key.pem
+      shell: bash
+    - run: ${{ secrets.SSH_PASSPHRASE }}
     - name: Bastion AuthN
-      run: ssh -tt -i ~/.ssh/bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} && ${{ secrets.SSH_PASSPHRASE }}
+      run: ssh -tt -i ~/.ssh/bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}
     - name: Bastion connection agreement
       run : ${{ secrets.SSH_PASSPHRASE }}
     - name: App AuthN
