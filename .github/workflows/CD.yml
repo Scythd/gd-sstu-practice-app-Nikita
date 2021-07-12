@@ -18,7 +18,7 @@ jobs:
         sudo apt-get update -y 
         sudo apt-get install -y expect
         eval `ssh-agent -s`
-        echo $'#!/usr/bin/expect -f \n spawn ssh-add bastion-key.pem \n expect "Enter passphrase for /home/runner/bastion-key.pem:" \n send "${{ secrets.SSH_PASSPHRASE }}" \n expect "Identity added: bastion-key.pem (bastion-key.pem)" \n interact' > ./prep.sh
+        echo $'#!/usr/bin/expect -f \n spawn ssh-add bastion-key.pem \n expect "Enter passphrase for /home/runner/bastion-key.pem:" \n send "${{ secrets.SSH_PASSPHRASE }}\n" \n expect "Identity added: bastion-key.pem (bastion-key.pem)" \n interact' > ./prep.sh
         chmod +x ./prep.sh 
         ./prep.sh
      
