@@ -10,7 +10,7 @@ jobs:
     
     runs-on: ubuntu-latest 
     env: 
-      BASTION: ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}
+      BASTION: "ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}"
     steps: 
     - uses: actions/checkout@v2
     - name: Prep 
