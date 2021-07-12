@@ -18,22 +18,40 @@ jobs:
         sudo apt-get update -y 
         sudo apt-get install -y expect
         eval `ssh-agent -s`
-        echo $'#!/usr/bin/expect -f \n spawn ssh-add bastion-key.pem \n expect "Enter passphrase for /home/runner/bastion-key.pem:" \n send "${{ secrets.SSH_PASSPHRASE }}\r" \n expect "Identity added: bastion-key.pem (bastion-key.pem)" \n interact' > ./prep.sh
+        echo $'#!/usr/bin/expect -f \n spawn ssh-add bastion-key.pem \n expect "Enter passphrase for /home/runner/bastion-key.pem:" \n 
+        send "${{ secrets.SSH_PASSPHRASE }}\r" \n expect "Identity added: bastion-key.pem (bastion-key.pem)" \n 
+        send "ssh -tt -A -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}\r" \n
+        expect "~]$" \n
+        send "ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}\r" \n
+        expect ":~$" \n
+        send "aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com\r" \n
+        expect ":~$" \n
+        send "docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr\r" \n
+        expect ":~$" \n
+        send "docker run -p 8080:8080 -d 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest\r" \n
+        expect ":~$" \n
+        send "docker logout\r" \n
+        expect ":~$" \n
+        send "logout\r" \n
+        expect "~]$" \n
+        send "logout\r" \n
+        interact \n
+        ' > ./prep.sh
         chmod +x ./prep.sh 
         ./prep.sh
      
       shell: bash
-    - run: ${{ secrets.SSH_PASSPHRASE }}
-    - name: Bastion AuthN
-      run: ssh -tt -i ~/.ssh/bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}
-    - name: Bastion connection agreement
-      run : ${{ secrets.SSH_PASSPHRASE }}
-    - name: App AuthN
-      run: ssh ubuntu@${{ secrets.APP_IP }}
-    - name: App connection agreement
-      run: yes  
-    - run : ${{ secrets.SSH_PASSPHRASE }}
-    - run:  ^C
+
+#    - name: Bastion AuthN
+#      run: ssh -tt -i ~/.ssh/bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}
+#    - name: Bastion connection agreement
+#      run : ${{ secrets.SSH_PASSPHRASE }}
+#    - name: App AuthN
+#      run: ssh ubuntu@${{ secrets.APP_IP }}
+#    - name: App connection agreement
+#      run: yes  
+#    - run : ${{ secrets.SSH_PASSPHRASE }}
+#    - run:  ^C
     
     - name: AuthN to AWS
       uses: aws-actions/configure-aws-credentials@v1
@@ -46,7 +64,7 @@ jobs:
     - name: Docker pull
       run: docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr
     - name: Docker deploy
-      run: docker start 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr
+      run: docker run 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr
       
     - name: Logout
       run:  docker logout
