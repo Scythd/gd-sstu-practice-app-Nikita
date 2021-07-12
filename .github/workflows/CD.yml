@@ -19,7 +19,7 @@ jobs:
         chmod 400 bastion-key.pem 
     - name: Put to Bastion
       run: |
-        $BASTION $'echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem &&
+        $BASTION $'echo \'${{ secrets.SSH_PRIVATE_KEY }}\' > bastion-key.pem &&
         chmod 400 bastion-key.pem &&
         APP="ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}" &&
         $APP \'
