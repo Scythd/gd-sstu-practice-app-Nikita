@@ -13,11 +13,11 @@ jobs:
     - name: Prep 1
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem && chmod 400 bastion-key.pem
     - name: AuthN Bastion
-      run: ssh -tt -A -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}
+      run: ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}
     - name: Prep 2
       run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem && chmod 400 bastion-key.pem
     - name: AuthN App
-      run: ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}
+      run: ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}
     
     - name: AuthN to AWS
       run: aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com
