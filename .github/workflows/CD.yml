@@ -15,7 +15,7 @@ jobs:
     - name: AuthN Bastion
       run: ssh -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}
     - name: Prep 2
-      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem && chmod 400 bastion-key.pem
+      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem 
     - name: AuthN App
       run: ssh -i bastion-key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}
     
