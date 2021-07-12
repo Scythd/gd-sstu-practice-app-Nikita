@@ -10,11 +10,11 @@ jobs:
     
     runs-on: ubuntu-latest 
     steps: 
-    - name: Prepare key
-      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 777 ~/.ssh/bastion-key.pem
+
     - name: Use agent
       run: | 
         mkdir ~/.ssh && chmod 777 ~/.ssh && touch ~/.ssh/bastion-key.pem
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 777 ~/.ssh/bastion-key.pem
         sudo apt-get update -y 
         sudo apt-get install -y expect
         eval `ssh-agent -s`
