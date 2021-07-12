@@ -12,7 +12,7 @@ jobs:
     steps: 
     - run: mkdir ~/.ssh && touch ~/.ssh/bastion-key.pem
     - name: Prepare key
-      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem && chmod 400 ~/.ssh/bastion-key.pem
+      run: echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/bastion-key.pem 
     - name: Use agent
       run: | 
         sudo apt-get update -y 
