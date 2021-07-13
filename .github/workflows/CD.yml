@@ -1,0 +1,34 @@
+on: 
+  push: 
+    branches: [ main ] 
+  pull_request: 
+    branches: [ main ] 
+
+jobs: 
+  deploy: 
+  
+    
+    runs-on: ubuntu-latest 
+    steps: 
+    - uses: actions/checkout@v2
+    - name: Prep 
+      run: |
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem 
+        chmod 400 bastion-key.pem 
+    - name: Put to Bastion
+      run: |
+        ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} $'
+        echo \'${{ secrets.SSH_PRIVATE_KEY }}\' > bastion-key.pem &&
+        chmod 700 bastion-key.pem &&
+        APP="ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}" &&
+        $APP \'
+        CONTAINER_NAME=$(docker stop petclinic) &&
+        if [[ $CONTAINER_NAME == "petclinic" ]]; then docker rm -f petclinic; fi &&
+        IMAGE_NAME=$(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q)
+        if [[ $IMAGE_NAMEE != "" ]]; then docker rmi -f $IMAGE_NAME; fi &&
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
+        docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
+        docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
+        docker logout
+        \'
+        '
