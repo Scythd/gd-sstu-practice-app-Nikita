@@ -1,8 +1,8 @@
 on: 
   push: 
-    branches: [ CD ] 
+    branches: [ main ] 
   pull_request: 
-    branches: [ CD ] 
+    branches: [ main ] 
 
 jobs: 
   deploy: 
