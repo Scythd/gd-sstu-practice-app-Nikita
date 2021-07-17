@@ -7,41 +7,42 @@ on:
     branches: [ main ] 
 
 jobs: 
-  build: 
+    build: 
     
-    runs-on: ubuntu-latest 
-    steps: 
-    - uses: actions/checkout@v2 
-    - name: Set up JDK 11 
-      uses: actions/setup-java@v2 
-      with: 
-        java-version: '11' 
-        distribution: 'adopt' 
-    - name: Build with Maven 
-      run: mvn package
-    - name: making war
-      run: | 
-        cd target 
-        for f in *.jar; do mv -- "$f" "${f%.jar}.war"; done 
-        cd .. 
-    - name: Copy artifact to staging directory 
-      run: | 
-        mkdir staging
-        cp target/*.war staging 
-    - uses: actions/upload-artifact@v2 
-      with: 
-        name: Package 
-        path: staging 
+      runs-on: ubuntu-latest 
+      steps: 
+      - uses: actions/checkout@v2 
+      - name: Set up JDK 11 
+        uses: actions/setup-java@v2 
+        with: 
+          java-version: '11' 
+          distribution: 'adopt' 
+      - name: Build with Maven 
+        run: mvn package
+      - name: making war
+        run: | 
+          cd target 
+          for f in *.jar; do mv -- "$f" "${f%.jar}.war"; done 
+          cd .. 
+      - name: Copy artifact to staging directory 
+        run: | 
+          mkdir staging
+          cp target/*.war staging 
+      - uses: actions/upload-artifact@v2 
+        with: 
+          name: Package 
+          path: staging 
+          
+    containerizationAndPull: 
+      needs: build 
+      runs-on: ubuntu-latest 
+      steps: 
+      - uses: actions/checkout@v2 
+      - uses: actions/download-artifact@master 
+        with: 
+          name: Package 
+          path: staging 
 
-  containerizationAndPull: 
-    needs: build 
-    runs-on: ubuntu-latest 
-    steps: 
-    - uses: actions/checkout@v2 
-    - uses: actions/download-artifact@master 
-      with: 
-        name: Package 
-        path: staging 
 #    - name: Auth to docker hub
 #      run:  docker login -u ${{secrets.DOCKER_HUB_USERNAME}} -p ${{secrets.DOCKER_HUB_PASSWORD}}
 #    - name: Build a docker container 
@@ -51,50 +52,60 @@ jobs:
 #    - name: Logout to docker hub
 #      run:  docker logout
       
-    - name: Auth to AWS
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.ECR_ID }}
-        aws-secret-access-key: ${{ secrets.ECR_SECRET }}
-        aws-region: ${{ secrets.ECR_REGION }}
-    - uses: aws-actions/amazon-ecr-login@v1
+      - name: Auth to AWS
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ECR_ID }}
+          aws-secret-access-key: ${{ secrets.ECR_SECRET }}
+          aws-region: ${{ secrets.ECR_REGION }}
+      - uses: aws-actions/amazon-ecr-login@v1
      
-    - name: Build a docker container 
-      run: docker build -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
-    - name: Push a docker container   
-      run: docker push 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
-    - name: Logout to docker hub
-      run:  docker logout
+      - name: Build a docker container 
+        run: docker build -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
+      - name: Push a docker container   
+        run: docker push 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
+      - name: Logout to docker hub
+        run:  docker logout
 
-    - name: delete unnessecary artifact
-      uses: GeekyEggo/delete-artifact@v1.0.0
-      with:
-        name: Package
+      - name: delete unnessecary artifact
+        uses: GeekyEggo/delete-artifact@v1.0.0
+        with:
+         name: Package
+
+    deploy: 
+      needs: containerizationAndPull
+      runs-on: ubuntu-latest 
+      steps: 
+      - uses: actions/checkout@v2
+      - name: Prep 
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem 
+          chmod 400 bastion-key.pem 
+      - name: Put to Bastion
+        run: |
+          ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} $' 
+             echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem &&
+             chmod 700 bastion-key.pem &&
+             echo \'
+                #!/bin/bash
+                  ssh -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
+                  docker ps &&
+                  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
+                  sudo docker stop petclinic &&
+                  sudo docker rm -f petclinic &&
+                  sudo docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest > pullresult.txt &&
+                  sudo docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
+                  sudo docker logout"
+             \' > update.sh &&
+             chmod 700 update.sh &&
+             echo "
+                #!/bin/bash
+                while read line
+                do
+                 ./update.sh \${1:--} \$line
+                done
+             " > start.sh &&
+             chmod 700 start.sh &&
+             aws ec2 describe-instances --region us-east-1 --filters Name="tag:Name",Values="App" Name="instance-state-name",Values="running" --query "Reservations[*].Instances[*].NetworkInterfaces[*].{NetworkInterface:PrivateIpAddress}" --output text | ./start.sh ./bastion-key.pem'
 
 
-  deploy: 
-    needs: containerizationAndPull
-    runs-on: ubuntu-latest 
-    steps: 
-    - uses: actions/checkout@v2
-    - name: Prep 
-      run: |
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem 
-        chmod 400 bastion-key.pem 
-    - name: Put to Bastion
-      run: |
-        ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} $'
-        echo \'${{ secrets.SSH_PRIVATE_KEY }}\' > bastion-key.pem &&
-        chmod 700 bastion-key.pem &&
-        APP="ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ubuntu@${{ secrets.APP_IP }}" &&
-        $APP \'
-        CONTAINER_NAME=$(docker stop petclinic) &&
-        if [[ $CONTAINER_NAME == "petclinic" ]]; then docker rm -f petclinic; fi &&
-        IMAGE_NAME=$(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q)
-        if [[ $IMAGE_NAMEE != "" ]]; then docker rmi -f $IMAGE_NAME; fi &&
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
-        docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
-        docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
-        docker logout
-        \'
-        '
