@@ -91,9 +91,9 @@ jobs:
               #!/bin/bash
                 ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $"
                 CONTAINER_NAME=$(docker stop petclinic) &&
-                if [[ $CONTAINER_NAME == \"petclinic\" ]]; then docker rm -f petclinic; fi &&
+                if (( $CONTAINER_NAME == \"petclinic\" )) ; then docker rm -f petclinic ; fi &&
                 IMAGE_NAME=$(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q)
-                if [[ $IMAGE_NAMEE != \"\" ]]; then docker rmi -f $IMAGE_NAME; fi &&
+                if (( $IMAGE_NAMEE != \"\" )) ; then docker rmi -f $IMAGE_NAME ; fi &&
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
                 docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest > pullresult.txt &&
                 docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
