@@ -84,13 +84,14 @@ jobs:
         chmod 400 bastion-key.pem 
     - name: Put to Bastion
       run: |
-        ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} $'
-        echo \'${{ secrets.SSH_PRIVATE_KEY }}\' > bastion-key.pem &&
-        chmod 700 bastion-key.pem &&
-        echo $\'
-        #!/bin/bash
-        APP="ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2"
-        $APP \'
+        BASTION="ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}"
+        $BASTION $'
+           echo \' ${{ secrets.SSH_PRIVATE_KEY }} \' > bastion-key.pem &&
+           chmod 700 bastion-key.pem &&
+           echo \'
+              #!/bin/bash
+              APP="ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2"
+              $APP "
                 CONTAINER_NAME=$(docker stop petclinic) &&
                 if [[ $CONTAINER_NAME == "petclinic" ]]; then docker rm -f petclinic; fi &&
                 IMAGE_NAME=$(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q)
@@ -98,20 +99,19 @@ jobs:
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
                 docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
                 docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
-                docker logout
-        \' > update.sh &&
-        chmod 700 update.sh &&
-        echo $\'
-        #!/bin/bash
-        while read line
-        do
-         ./update.sh ${1:--} line
-        done
-        \' > start.sh &&
-        chmod 700 start.sh &&
-        aws ec2 describe-instances --region us-east-1 --filters Name="tag:Name",Values="App" Name="instance-state-name",Values="running","pending" --query 'Reservations[*].Instances[*].NetworkInterfaces[*].{NetworkInterface:PrivateIpAddress}' --output text | ./start.sh bastion-key.pem
-        \'
-        '
+                docker logout "
+           \' > update.sh &&
+           chmod 700 update.sh &&
+           echo \'
+              #!/bin/bash
+              while read line
+              do
+               ./update.sh ${1:--} line
+              done
+           \' > start.sh &&
+           chmod 700 start.sh &&
+           aws ec2 describe-instances --region us-east-1 --filters Name="tag:Name",Values="App" Name="instance-state-name",Values="running","pending" --query "Reservations[*].Instances[*].NetworkInterfaces[*].{NetworkInterface:PrivateIpAddress}" --output text | ./start.sh bastion-key.pem
+      '
 
 
 
