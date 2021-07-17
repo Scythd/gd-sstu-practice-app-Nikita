@@ -89,8 +89,7 @@ jobs:
            chmod 700 bastion-key.pem &&
            echo \'
               #!/bin/bash
-                ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $"
-                CONTAINER_NAME=$(docker stop petclinic) &&
+                ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" CONTAINER_NAME=$(docker stop petclinic) &&
                 if (( "$CONTAINER_NAME" == \"petclinic\" )) ; then docker rm -f petclinic ; fi &&
                 IMAGE_NAME=$(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q)
                 if (( "$IMAGE_NAME" != \"\" )) ; then docker rmi -f $IMAGE_NAME ; fi &&
