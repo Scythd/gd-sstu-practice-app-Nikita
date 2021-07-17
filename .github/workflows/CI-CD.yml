@@ -89,7 +89,7 @@ jobs:
            chmod 700 bastion-key.pem &&
            echo \'
               #!/bin/bash
-                ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
+                ssh -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
                 echo `sudo docker stop petclinic` &&
                 echo `sudo docker rm -f petclinic` &&
