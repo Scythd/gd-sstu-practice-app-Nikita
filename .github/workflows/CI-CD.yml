@@ -110,4 +110,4 @@ jobs:
            " > start.sh &&
            chmod 700 start.sh &&
            aws ec2 describe-instances --region us-east-1 --filters Name="tag:Name",Values="App" Name="instance-state-name",Values="running" --query "Reservations[*].Instances[*].NetworkInterfaces[*].{NetworkInterface:PrivateIpAddress}" --output text | ./start.sh ./bastion-key.pem
-      
+      '
