@@ -89,8 +89,8 @@ jobs:
            chmod 700 bastion-key.pem &&
            echo \'
               #!/bin/bash
-                ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" echo `../../bin/docker stop petclinic` &&
-                echo `../../bin/docker rm -f petclinic` &&
+                ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" echo `~/.bashrc/docker stop petclinic` &&
+                echo `~/.bashrc/docker rm -f petclinic` &&
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
                 docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest > pullresult.txt &&
                 docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
