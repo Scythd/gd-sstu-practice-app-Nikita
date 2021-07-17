@@ -84,14 +84,13 @@ jobs:
         chmod 400 bastion-key.pem 
     - name: Put to Bastion
       run: |
-        BASTION="ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }}"
-        $BASTION $'
+        ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} $'
            echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem &&
            chmod 700 bastion-key.pem &&
            echo \'
               #!/bin/bash
-              APP="ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2"
-              $APP $"CONTAINER_NAME=$(docker stop petclinic) &&
+            APP="ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $"
+                CONTAINER_NAME=$(docker stop petclinic) &&
                 if [[ $CONTAINER_NAME == \"petclinic\" ]]; then docker rm -f petclinic; fi &&
                 IMAGE_NAME=$(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q)
                 if [[ $IMAGE_NAMEE != \"\" ]]; then docker rmi -f $IMAGE_NAME; fi &&
@@ -111,3 +110,5 @@ jobs:
            chmod 700 start.sh &&
            aws ec2 describe-instances --region us-east-1 --filters Name="tag:Name",Values="App" Name="instance-state-name",Values="running" --query "Reservations[*].Instances[*].NetworkInterfaces[*].{NetworkInterface:PrivateIpAddress}" --output text | ./start.sh ./bastion-key.pem
       '
+      - name: Kappa
+        run: echo "Kappa"
