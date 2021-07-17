@@ -104,7 +104,7 @@ jobs:
               #!/bin/bash
               while read line
               do
-               ./update.sh \${1:--} $line
+               ./update.sh \${1:--} \"$line\"
               done
            " > start.sh &&
            chmod 700 start.sh &&
