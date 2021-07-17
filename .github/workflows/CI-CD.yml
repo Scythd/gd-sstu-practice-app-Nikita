@@ -92,8 +92,8 @@ jobs:
                 ssh -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
                 docker ps &&
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
-                echo `sudo docker stop petclinic` &&
-                echo `sudo docker rm -f petclinic` &&
+                sudo docker stop petclinic &&
+                sudo docker rm -f petclinic &&
                 sudo docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest > pullresult.txt &&
                 sudo docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
                 sudo docker logout"
