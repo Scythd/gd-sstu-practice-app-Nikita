@@ -84,12 +84,12 @@ jobs:
         chmod 400 bastion-key.pem 
     - name: Put to Bastion
       run: |
-        ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} $'
+        ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no ec2-user@${{ secrets.BASTION_IP }} $' 
            echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem &&
            chmod 700 bastion-key.pem &&
            echo \'
               #!/bin/bash
-                ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $"
+                ssh -tt -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
                 echo `sudo docker stop petclinic` &&
                 echo `sudo docker rm -f petclinic` &&
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
