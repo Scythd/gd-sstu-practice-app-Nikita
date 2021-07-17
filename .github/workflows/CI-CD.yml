@@ -93,9 +93,6 @@ jobs:
                 echo "container stopped" &&
                 if (( " $CONTAINER_NAME" == \" petclinic\" )) ; then docker rm petclinic ; fi &&
                 echo "container removed" &&
-                IMAGE_NAME=$(docker images 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest -q)
-#                if (( " $IMAGE_NAME" != \" \" )) ; then docker rmi $IMAGE_NAME ; fi &&
-#                echo "image removed" &&
                 aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
                 docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest > pullresult.txt &&
                 docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
