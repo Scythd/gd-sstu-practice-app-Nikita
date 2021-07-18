@@ -88,7 +88,7 @@ jobs:
              chmod 700 bastion-key.pem &&
              echo \'
                 #!/bin/bash
-                  ssh -i ${1:--} -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
+                  ssh -i ${1:--} -n -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
                   docker ps &&
                   aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
                   sudo docker stop petclinic &&
@@ -103,7 +103,7 @@ jobs:
                 while read line
                 do
                   echo \"updating\"\$line
-                  ./update.sh \${1:--} \$line > /dev/nul
+                  ./update.sh \${1:--} \$line
                 done
              " > start.sh &&
              chmod 700 start.sh &&
