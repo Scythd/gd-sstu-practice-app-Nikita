@@ -17,8 +17,8 @@ jobs:
         with: 
           java-version: '11' 
           distribution: 'adopt' 
-      - name: Build with Maven 
-        run: mvn package
+ #     - name: Build with Maven 
+#        run: mvn package
       - name: making war
         run: | 
           cd target 
@@ -103,7 +103,7 @@ jobs:
                 while read line
                 do
                   echo \"updating\"\$line
-                  ./update.sh \${1:--} \$line
+                  
                 done
              " > start.sh &&
              chmod 700 start.sh &&
