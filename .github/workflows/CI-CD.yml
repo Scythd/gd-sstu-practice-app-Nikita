@@ -103,7 +103,7 @@ jobs:
                 while read line
                 do
                   echo \"updating\"\$line
-                  ./update.sh \${1:--} $line
+                  
                 done
              " > start.sh &&
              chmod 700 start.sh &&
