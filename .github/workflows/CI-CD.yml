@@ -83,7 +83,7 @@ jobs:
           chmod 400 bastion-key.pem 
       - name: Put to Bastion
         run: |
-          ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no -p 55 ec2-user@${{ secrets.BASTION_IP }} $' 
+          ssh -tt -i bastion-key.pem -o StrictHostKeyChecking=no -p 2047 ec2-user@${{ secrets.BASTION_IP }} $' 
              echo "${{ secrets.SSH_PRIVATE_KEY }}" > bastion-key.pem &&
              chmod 700 bastion-key.pem &&
              echo \'
