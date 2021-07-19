@@ -18,7 +18,7 @@ jobs:
           java-version: '11' 
           distribution: 'adopt' 
       - name: Build with Maven 
-        run: mvn package -Dspring-boot.run.profiles=mysql -Dspring.datasource.url=${{secrets.DB_URL}} -Dspring.datasource.username=${{secrets.DB_UN}} -Dspring.datasource.password=${{secrets.DB_PASS}}
+        run: mvn package -Dspring-boot.run.profiles=mysql -Dspring.datasource.url=jdbc:mysql:${{secrets.DB_URL}}/petclinic -Dspring.datasource.username=${{secrets.DB_UN}} -Dspring.datasource.password=${{secrets.DB_PASS}}
       - name: making war
         run: | 
           cd target 
@@ -61,7 +61,7 @@ jobs:
       - uses: aws-actions/amazon-ecr-login@v1
      
       - name: Build a docker container 
-        run: docker build -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
+        run: docker build --build-arg MYSQL_URL=jdbc:mysql://${{secrets.DB_URL}} --build-arg MYSQL_USER=${{secrets.DB_UN}} --build-arg MYSQL_PASS=${{secrets.DB_PASS}}   -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
       - name: Push a docker container   
         run: docker push 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
       - name: Logout to docker hub
