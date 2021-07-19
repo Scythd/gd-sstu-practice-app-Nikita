@@ -18,7 +18,7 @@ jobs:
           java-version: '11' 
           distribution: 'adopt' 
       - name: Build with Maven 
-        run: mvn package -Dspring-boot.run.profiles=mysql -Dspring.datasource.url=${{DB_URL}} -Dspring.datasource.username=${{DB_UN}} -Dspring.datasource.password=${{DB_PASS}}
+        run: mvn package -Dspring-boot.run.profiles=mysql -Dspring.datasource.url=${{secrets.DB_URL}} -Dspring.datasource.username=${{secrets.DB_UN}} -Dspring.datasource.password=${{secrets.DB_PASS}}
       - name: making war
         run: | 
           cd target 
