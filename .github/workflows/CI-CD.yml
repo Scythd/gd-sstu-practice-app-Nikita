@@ -90,13 +90,12 @@ jobs:
              chmod 700 bastion-key.pem &&
              echo \'
                 #!/bin/bash
-                  ssh -i ${1:--} -n -o StrictHostKeyChecking=no ubuntu@$2 $" PATH=$PATH":/snap/bin/docker:/usr/bin/docker" &&
-                  docker ps &&
-                  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com &&
-                  sudo docker stop petclinic &&
-                  sudo docker rm -f petclinic &&
-                  sudo docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
-                  sudo docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest &&
+                  ssh -i ${1:--} -n -o StrictHostKeyChecking=no ubuntu@$2 $" docker ps
+                  aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 176361202031.dkr.ecr.us-east-1.amazonaws.com
+                  sudo docker stop petclinic
+                  sudo docker rm -f petclinic
+                  sudo docker pull 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
+                  sudo docker run -d -p 8080:8080 --name petclinic 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
                   sudo docker logout"
              \' > update.sh &&
              chmod 700 update.sh &&
