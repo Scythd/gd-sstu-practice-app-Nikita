@@ -5,4 +5,4 @@ ENV MYSQL_PASS=$mysql_pass
 ARG WAR_FILE=staging/*.war
 COPY ${WAR_FILE} app.war
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app.war"]
+ENTRYPOINT ["java","-Dspring.profiles.active","-jar","/app.war"]
