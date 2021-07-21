@@ -20,7 +20,7 @@ jobs:
       - name: Docker test mysql env
         run: docker-compose up -d
       - name: Build with Maven 
-        run: maven package -e
+        run: mvn package -e
       - name: making war
         run: | 
           cd target 
