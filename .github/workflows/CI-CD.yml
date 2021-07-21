@@ -63,7 +63,7 @@ jobs:
       - uses: aws-actions/amazon-ecr-login@v1
      
       - name: Build a docker container 
-        run: docker build --build-arg mysql_url=jdbc:mysql://${{secrets.DB_URL}}/petclinic --build-arg mysql_user=${{secrets.DB_UN}} --build-arg mysql_pass=${{secrets.DB_PASS}} -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
+        run: docker build -t 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest .
       - name: Push a docker container   
         run: docker push 176361202031.dkr.ecr.us-east-1.amazonaws.com/ecr:latest
       - name: Logout to docker hub
