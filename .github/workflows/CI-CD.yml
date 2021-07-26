@@ -70,10 +70,10 @@ jobs:
       - name: Logout to docker hub
         run:  docker logout
 
-      - name: delete unnessecary artifact
-        uses: GeekyEggo/delete-artifact@v1.0.0
-        with:
-         name: Package
+#      - name: delete unnessecary artifact
+#        uses: GeekyEggo/delete-artifact@v1.0.0
+#        with:
+#         name: Package
 
     deploy: 
       needs: containerizationAndPull
