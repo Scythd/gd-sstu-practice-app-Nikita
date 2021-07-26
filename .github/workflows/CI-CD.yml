@@ -20,13 +20,13 @@ jobs:
       - name: Docker test mysql env
         run: docker-compose up -d
       - name: Build with Maven 
-        run: ./mvnw package -P MySQL -Dspring-boot.run.profiles=test
-#        run: mvn package -D spring-boot.run.profiles=test -e 
-#      - name: making war
-#        run: | 
-#          cd target 
-#          for f in *.jar; do mv -- "$f" "${f%.jar}.war"; done 
-#          cd .. 
+#        run: ./mvnw package -P MySQL -Dspring-boot.run.profiles=test
+        run: mvn package -Dspring-boot.run.profiles=test -e 
+      - name: making war
+        run: | 
+          cd target 
+          for f in *.jar; do mv -- "$f" "${f%.jar}.war"; done 
+          cd .. 
       - name: Copy artifact to staging directory 
         run: | 
           mkdir staging
