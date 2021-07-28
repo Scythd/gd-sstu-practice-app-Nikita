@@ -17,10 +17,9 @@ jobs:
         with: 
           java-version: '11' 
           distribution: 'adopt' 
-      - name: Docker test mysql env
+#      - name: Docker test mysql env
 #        run: docker-compose up -d
-#      - name: Build with Maven 
-#        run: ./mvnw package -P MySQL -Dspring-boot.run.profiles=test
+      - name: Build with Maven 
         run: mvn package -Dspring-boot.run.profiles=test -e 
       - name: making war
         run: | 
